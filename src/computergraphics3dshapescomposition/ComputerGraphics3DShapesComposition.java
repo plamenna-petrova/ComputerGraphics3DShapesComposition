@@ -8,6 +8,7 @@ package computergraphics3dshapescomposition;
 import com.sun.j3d.utils.behaviors.keyboard.KeyNavigatorBehavior;
 import com.sun.j3d.utils.behaviors.vp.OrbitBehavior;
 import com.sun.j3d.utils.behaviors.vp.ViewPlatformAWTBehavior;
+import com.sun.j3d.utils.geometry.Cone;
 import com.sun.j3d.utils.geometry.Cylinder;
 import com.sun.j3d.utils.geometry.Primitive;
 import com.sun.j3d.utils.geometry.Sphere;
@@ -69,8 +70,7 @@ public class ComputerGraphics3DShapesComposition extends JFrame implements KeyLi
         //  canvas.addKeyListener(this);        
         OrbitBehavior orbitBehavior = new OrbitBehavior(canvas, ViewPlatformAWTBehavior.KEY_LISTENER | OrbitBehavior.REVERSE_ROTATE | OrbitBehavior.REVERSE_TRANSLATE | OrbitBehavior.PROPORTIONAL_ZOOM);
         orbitBehavior.setSchedulingBounds(new BoundingSphere(new Point3d(0, 0, 0), 100));
-        universe.getViewingPlatform().setViewPlatformBehavior(orbitBehavior);//движи изгледа около точка с натискането на мишката
-        // извърщва ротация транслация и мащабиране
+        universe.getViewingPlatform().setViewPlatformBehavior(orbitBehavior);
     }
 
     private BranchGroup createSceneGraph() {
@@ -89,13 +89,13 @@ public class ComputerGraphics3DShapesComposition extends JFrame implements KeyLi
         platformGeom.addChild(keyNavBeh);
         universe.getViewingPlatform().setPlatformGeometry(platformGeom);
 
-        objRoot.addChild(createBall());
-        objRoot.addChild(createColorCube());
+        objRoot.addChild(createCone());
+        objRoot.addChild(createCylinder());
 
         return objRoot;
     }
 
-    private BranchGroup createBall() {
+    private BranchGroup createCone() {
 
         BranchGroup objRoot = new BranchGroup();
         TransformGroup tg = new TransformGroup();
@@ -111,11 +111,11 @@ public class ComputerGraphics3DShapesComposition extends JFrame implements KeyLi
 
         tg_tink.setTransform(t3d_tink);
 
-        Appearance ap = new Appearance();
-        Sphere shape
-                = new Sphere(0.4f, Primitive.GENERATE_NORMALS | Primitive.GENERATE_TEXTURE_COORDS, 50, ap);
+        Appearance appearance = new Appearance();
 
-        tg_tink.addChild(shape);
+        Cone cone = new Cone(2.8f, 5.5f, Primitive.GENERATE_NORMALS_INWARD | Primitive.GENERATE_TEXTURE_COORDS, appearance);
+        
+        tg_tink.addChild(cone);
 
         CollisionDetectorGroup cdGroup = new CollisionDetectorGroup(tg_tink);
         cdGroup.setSchedulingBounds(bounds);
@@ -133,7 +133,7 @@ public class ComputerGraphics3DShapesComposition extends JFrame implements KeyLi
 
     }
 
-    private BranchGroup createColorCube() {
+    private BranchGroup createCylinder() {
 
         BranchGroup objRoot = new BranchGroup();
         TransformGroup tg = new TransformGroup();
@@ -150,13 +150,10 @@ public class ComputerGraphics3DShapesComposition extends JFrame implements KeyLi
         Material material = new Material();
 
         Color3f lightColor = new Color3f(Color.BLUE);
-
         Color3f darkColor = new Color3f(Color.GREEN);
 
         material.setEmissiveColor(lightColor);
-
         material.setDiffuseColor(darkColor);
-
         material.setSpecularColor(new Color3f(Color.RED));
 
         appearance.setMaterial(material);
@@ -173,7 +170,7 @@ public class ComputerGraphics3DShapesComposition extends JFrame implements KeyLi
         return objRoot;
 
     }
-
+    
     private Light createLight() {
         DirectionalLight light = new DirectionalLight(true, new Color3f(1.0f, 1.0f, 1.0f),
                 new Vector3f(-0.3f, 0.2f, -1.0f));
