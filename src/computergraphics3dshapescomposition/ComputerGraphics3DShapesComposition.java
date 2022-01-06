@@ -152,6 +152,10 @@ public class ComputerGraphics3DShapesComposition extends JFrame implements KeyLi
        
         Cone cone = new Cone(2.8f, 5.5f, Primitive.GENERATE_NORMALS_INWARD | Primitive.GENERATE_TEXTURE_COORDS, cylinderAppearance);
         
+        TransformGroup sphereTransformGroup = new TransformGroup();
+        
+        sphereTransformGroup.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
+        
         Appearance shpereAppearance = new Appearance();
         
         try {
@@ -163,10 +167,14 @@ public class ComputerGraphics3DShapesComposition extends JFrame implements KeyLi
         }
         
         Sphere sphere = new Sphere(0.6f, Primitive.GENERATE_NORMALS|Primitive.GENERATE_TEXTURE_COORDS, 50, shpereAppearance);
+        
+        sphereTransformGroup.addChild(sphere);
+        
+        initiateRotation(5000, sphereTransformGroup);
 
         tg_tink.addChild(cone);
         
-        tg_tink.addChild(sphere);
+        tg_tink.addChild(sphereTransformGroup);
         
         CollisionDetectorGroup cdGroup = new CollisionDetectorGroup(tg_tink);
         cdGroup.setSchedulingBounds(bounds);
