@@ -8,10 +8,12 @@ package computergraphics3dshapescomposition;
 import com.sun.j3d.utils.behaviors.keyboard.KeyNavigatorBehavior;
 import com.sun.j3d.utils.behaviors.vp.OrbitBehavior;
 import com.sun.j3d.utils.behaviors.vp.ViewPlatformAWTBehavior;
+import com.sun.j3d.utils.geometry.Box;
 import com.sun.j3d.utils.geometry.Cone;
 import com.sun.j3d.utils.geometry.Cylinder;
 import com.sun.j3d.utils.geometry.Primitive;
 import com.sun.j3d.utils.geometry.Sphere;
+import com.sun.j3d.utils.image.TextureLoader;
 import com.sun.j3d.utils.universe.PlatformGeometry;
 import com.sun.j3d.utils.universe.SimpleUniverse;
 import java.awt.BorderLayout;
@@ -19,7 +21,10 @@ import java.awt.Color;
 import java.awt.GraphicsConfiguration;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.Enumeration;
+import javax.imageio.ImageIO;
 import javax.media.j3d.Appearance;
 import javax.media.j3d.Behavior;
 import javax.media.j3d.BoundingSphere;
@@ -28,6 +33,7 @@ import javax.media.j3d.Canvas3D;
 import javax.media.j3d.DirectionalLight;
 import javax.media.j3d.Light;
 import javax.media.j3d.Material;
+import javax.media.j3d.Texture;
 import javax.media.j3d.Transform3D;
 import javax.media.j3d.TransformGroup;
 import javax.media.j3d.WakeupOnCollisionEntry;
@@ -96,6 +102,9 @@ public class ComputerGraphics3DShapesComposition extends JFrame implements KeyLi
     }
 
     private BranchGroup createCone() {
+        
+        BufferedImage cylinderBrickImage;
+        Texture texture;
 
         BranchGroup objRoot = new BranchGroup();
         TransformGroup tg = new TransformGroup();
@@ -111,17 +120,29 @@ public class ComputerGraphics3DShapesComposition extends JFrame implements KeyLi
 
         tg_tink.setTransform(t3d_tink);
 
-        Appearance appearance = new Appearance();
-
-        Cone cone = new Cone(2.8f, 5.5f, Primitive.GENERATE_NORMALS_INWARD | Primitive.GENERATE_TEXTURE_COORDS, appearance);
+        Appearance cylinderAppearance = new Appearance();
         
+        try {
+            cylinderBrickImage = ImageIO.read(getClass().getResourceAsStream("/brick2.jpg"));
+            texture = new TextureLoader(cylinderBrickImage, this).getTexture();
+            cylinderAppearance.setTexture(texture);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+       
+        Cone cone = new Cone(2.8f, 5.5f, Primitive.GENERATE_NORMALS_INWARD | Primitive.GENERATE_TEXTURE_COORDS, cylinderAppearance);
+        
+        Appearance shpereAppearance = new Appearance();
+        
+        Sphere sphere = new Sphere(0.6f, Primitive.GENERATE_NORMALS|Primitive.GENERATE_TEXTURE_COORDS, 50, shpereAppearance);
+
         tg_tink.addChild(cone);
+        tg_tink.addChild(sphere);
 
         CollisionDetectorGroup cdGroup = new CollisionDetectorGroup(tg_tink);
         cdGroup.setSchedulingBounds(bounds);
 
         tg.addChild(tg_tink);
-        // objRoot.addChild(tg_tink);
         tg.addChild(cdGroup);
 
         objRoot.addChild(tg);
@@ -149,7 +170,7 @@ public class ComputerGraphics3DShapesComposition extends JFrame implements KeyLi
 
         Material material = new Material();
 
-        Color3f lightColor = new Color3f(Color.BLUE);
+        Color3f lightColor = new Color3f(0.0f, 0.0f, 1.0f);
         Color3f darkColor = new Color3f(Color.GREEN);
 
         material.setEmissiveColor(lightColor);
@@ -159,9 +180,9 @@ public class ComputerGraphics3DShapesComposition extends JFrame implements KeyLi
         appearance.setMaterial(material);
 
         Cylinder cylinder = new Cylinder(5, 10, appearance);
-
+        
         tg.addChild(cylinder);
-
+        
         objRoot.addChild(tg);
         objRoot.addChild(createLight());
 
