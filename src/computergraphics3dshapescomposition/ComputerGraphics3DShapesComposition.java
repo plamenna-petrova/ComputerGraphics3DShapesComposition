@@ -239,22 +239,24 @@ public class ComputerGraphics3DShapesComposition extends JFrame implements KeyLi
 
         return light;
     }
+    
+    private void transformWhenKeyPressed(Transform3D step, Transform3D tink3D, TransformGroup transformGroupTink, Vector3d vector) 
+    {
+        step.set(vector);
+        transformGroupTink.getTransform(tink3D);
+        tink3D.mul(step);
+        transformGroupTink.setTransform(tink3D);
+    }
 
     public void keyPressed(KeyEvent e) {
         char key = e.getKeyChar();
 
         if (key == 'q') {
-            t3dstep.set(new Vector3d(0.0, 0.0, 0.1));
-            tg_tink.getTransform(t3d_tink);
-            t3d_tink.mul(t3dstep);
-            tg_tink.setTransform(t3d_tink);
+            transformWhenKeyPressed(t3dstep, t3d_tink, tg_tink, new Vector3d(0.0, 0.0, 0.1));
         }
 
         if (key == 'w') {
-            t3dstep.set(new Vector3d(0.0, 0.0, -0.1));
-            tg_tink.getTransform(t3d_tink);
-            t3d_tink.mul(t3dstep);
-            tg_tink.setTransform(t3d_tink);
+            transformWhenKeyPressed(t3dstep, t3d_tink, tg_tink, new Vector3d(0.0, 0.0, -0.1));  
         }
 
     }
@@ -264,7 +266,7 @@ public class ComputerGraphics3DShapesComposition extends JFrame implements KeyLi
 
     public void keyTyped(KeyEvent e) {
     }
-
+    
     class CollisionDetectorGroup extends Behavior {
 
         private boolean inCollision = false;
@@ -286,22 +288,24 @@ public class ComputerGraphics3DShapesComposition extends JFrame implements KeyLi
             wExit = new WakeupOnCollisionExit(group);
             wakeupOn(wEnter);
         }
+        
+        
+        private void setCollisionDistance(Transform3D step, Transform3D tink3D, TransformGroup transformGroupTink, Vector3d vector) {
+            step.set(vector);
+            transformGroupTink.getTransform(tink3D);
+            tink3D.mul(step);
+            transformGroupTink.setTransform(tink3D);
+        }
 
         public void processStimulus(Enumeration criteria) {
 
             inCollision = !inCollision;
             if (inCollision) {
                 if (collisionCounts > 0) {
-                    t3dstep.set(new Vector3d(0.0, 0.0, -0.2));
-                    tg_tink.getTransform(t3d_tink);
-                    t3d_tink.mul(t3dstep);
-                    tg_tink.setTransform(t3d_tink);
+                    setCollisionDistance(t3dstep, t3d_tink, tg_tink, new Vector3d(0.0, 0.0, -0.2));
                     collisionCounts++;
                 } else {
-                    t3dstep.set(new Vector3d(0.0, 0.0, -6.0));
-                    tg_tink.getTransform(t3d_tink);
-                    t3d_tink.mul(t3dstep);
-                    tg_tink.setTransform(t3d_tink);
+                    setCollisionDistance(t3dstep, t3d_tink, tg_tink, new Vector3d(0.0, 0.0, -6.0));
                     collisionCounts++;
                 }
                 wakeupOn(wExit);
