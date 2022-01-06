@@ -181,7 +181,7 @@ public class ComputerGraphics3DShapesComposition extends JFrame  {
         tg_tink.addChild(cone);
 
         tg_tink.addChild(sphereTransformGroup);
-
+        
         CollisionDetectorGroup cdGroup = new CollisionDetectorGroup(tg_tink);
         cdGroup.setSchedulingBounds(bounds);
 
@@ -234,14 +234,10 @@ public class ComputerGraphics3DShapesComposition extends JFrame  {
 
         cylinderTransformGroup.addChild(cylinder);
 
-        CollisionDetectorGroup cdGroup = new CollisionDetectorGroup(cylinderTransformGroup);
-        cdGroup.setSchedulingBounds(bounds);
-
         tg.addChild(cylinderTransformGroup);
 
-        tg.addChild(cdGroup);
-
         objRoot.addChild(tg);
+        
         objRoot.addChild(createLight());
 
         objRoot.compile();
@@ -307,11 +303,11 @@ public class ComputerGraphics3DShapesComposition extends JFrame  {
             if (inCollision) {
                 double vectorXAxis = 0.0;
                 double vectorYAxis = 0.0;
-                double vectorZAxis = -3.0;
-                if (vectorZAxis > -4.5 || vectorZAxis < -3.0) {
+                double vectorZAxis = -6.0;
+                if (vectorZAxis < -6.0) {
                     setCollisionDistance(t3dstep, t3d_tink, tg_tink, new Vector3d(vectorXAxis, vectorYAxis, vectorZAxis));
                 } else {
-                    setCollisionDistance(t3dstep, t3d_tink, tg_tink, new Vector3d(vectorXAxis, vectorYAxis, -3.0));
+                    setCollisionDistance(t3dstep, t3d_tink, tg_tink, new Vector3d(vectorXAxis, vectorYAxis, -6.0));
                 }
                 wakeupOn(wExit);
             } else {
