@@ -90,7 +90,7 @@ public class ComputerGraphics3DShapesComposition extends JFrame implements KeyLi
         TransformGroup viewtrans = new TransformGroup();
 
         // BoundingSphere bounds = new BoundingSphere(new Point3d(), 10000.0);
-        bounds = new BoundingSphere(new Point3d(), 10000.0);
+        bounds = new BoundingSphere(new Point3d(), 15000.0);
 
         viewtrans = universe.getViewingPlatform().getViewPlatformTransform();
 
@@ -175,7 +175,7 @@ public class ComputerGraphics3DShapesComposition extends JFrame implements KeyLi
         
         tg.addChild(cdGroup);
         
-        initiateRotation(18000, tg);
+        initiateRotation(15000, tg);
 
         objRoot.addChild(tg);
         objRoot.addChild(createLight());
@@ -192,7 +192,7 @@ public class ComputerGraphics3DShapesComposition extends JFrame implements KeyLi
         TransformGroup tg = new TransformGroup();
         Transform3D t3d = new Transform3D();
 
-        t3d.setTranslation(new Vector3d(1.2, -1.3, -2.1));
+        t3d.setTranslation(new Vector3d(0.8, -0.9, -1.7));
         t3d.setRotation(new AxisAngle4f(0.0f, 1.0f, 0.0f, 2.24f));
         t3d.setScale(0.6);
 
@@ -289,8 +289,8 @@ public class ComputerGraphics3DShapesComposition extends JFrame implements KeyLi
     }
 
     public static void main(String[] args) {
-        ComputerGraphics3DShapesComposition opr = new ComputerGraphics3DShapesComposition();
-        opr.setSize(500, 500);
-        opr.setVisible(true);
+        ComputerGraphics3DShapesComposition shapesComposition = new ComputerGraphics3DShapesComposition();
+        shapesComposition.setSize(800, 800);
+        shapesComposition.setVisible(true);
     }
 }
