@@ -23,11 +23,13 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.net.URL;
 import java.util.Enumeration;
 import java.util.Vector;
 import javax.imageio.ImageIO;
 import javax.media.j3d.Alpha;
 import javax.media.j3d.Appearance;
+import javax.media.j3d.Background;
 import javax.media.j3d.Behavior;
 import javax.media.j3d.BoundingSphere;
 import javax.media.j3d.BranchGroup;
@@ -76,8 +78,7 @@ public class ComputerGraphics3DShapesComposition extends JFrame implements KeyLi
         canvas.addKeyListener(this);
 
         universe.addBranchGraph(scene);
-
-        //  canvas.addKeyListener(this);        
+    
         OrbitBehavior orbitBehavior = new OrbitBehavior(canvas, ViewPlatformAWTBehavior.KEY_LISTENER | OrbitBehavior.REVERSE_ROTATE | OrbitBehavior.REVERSE_TRANSLATE | OrbitBehavior.PROPORTIONAL_ZOOM);
         orbitBehavior.setSchedulingBounds(new BoundingSphere(new Point3d(0, 0, 0), 100));
         universe.getViewingPlatform().setViewPlatformBehavior(orbitBehavior);
@@ -101,6 +102,14 @@ public class ComputerGraphics3DShapesComposition extends JFrame implements KeyLi
 
         objRoot.addChild(createConeWithNestedSphere());
         objRoot.addChild(createCylinder());
+        
+        Background sceneBackground = new Background(0.5f, 1.0f, 1.0f);
+        URL filenameBackground = getClass().getClassLoader().getResource("space.jpg");
+        sceneBackground.setImage(new TextureLoader(filenameBackground, this).getImage());
+        sceneBackground.setImageScaleMode(Background.SCALE_FIT_ALL);
+        sceneBackground.setApplicationBounds(bounds);
+        
+        objRoot.addChild(sceneBackground);
 
         return objRoot;
     }
@@ -181,7 +190,7 @@ public class ComputerGraphics3DShapesComposition extends JFrame implements KeyLi
         tg.addChild(tg_tink);
 
         tg.addChild(cdGroup);
-
+        
         initiateRotation(15000, tg);
 
         objRoot.addChild(tg);
