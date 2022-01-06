@@ -143,7 +143,7 @@ public class ComputerGraphics3DShapesComposition extends JFrame implements KeyLi
         Appearance cylinderAppearance = new Appearance();
         
         try {
-            coneBrickImage = ImageIO.read(getClass().getResourceAsStream("/brick2.jpg"));
+            coneBrickImage = ImageIO.read(getClass().getResourceAsStream("/brick.jpg"));
             coneTexture = new TextureLoader(coneBrickImage, this).getTexture();
             cylinderAppearance.setTexture(coneTexture);
         } catch (IOException exception) {
@@ -195,7 +195,7 @@ public class ComputerGraphics3DShapesComposition extends JFrame implements KeyLi
     }
 
     private BranchGroup createCylinder() {
-
+        
         BranchGroup objRoot = new BranchGroup();
         TransformGroup tg = new TransformGroup();
         Transform3D t3d = new Transform3D();
@@ -206,7 +206,7 @@ public class ComputerGraphics3DShapesComposition extends JFrame implements KeyLi
 
         tg.setTransform(t3d);
 
-        Appearance appearance = new Appearance();
+        Appearance cylinderAppearance = new Appearance();
 
         Material material = new Material();
 
@@ -217,9 +217,9 @@ public class ComputerGraphics3DShapesComposition extends JFrame implements KeyLi
         material.setDiffuseColor(darkColor);
         material.setSpecularColor(new Color3f(Color.RED));
 
-        appearance.setMaterial(material);
-
-        Cylinder cylinder = new Cylinder(5, 10, appearance);
+        cylinderAppearance.setMaterial(material);
+        
+        Cylinder cylinder = new Cylinder(5, 10, cylinderAppearance);
         
         tg.addChild(cylinder);
         
@@ -241,11 +241,18 @@ public class ComputerGraphics3DShapesComposition extends JFrame implements KeyLi
         return light;
     }
 
-    public void keyTyped(KeyEvent e) {
+    public void keyPressed(KeyEvent e) {
         char key = e.getKeyChar();
 
         if (key == 'q') {
             t3dstep.set(new Vector3d(0.0, 0.0, 0.1));
+            tg_tink.getTransform(t3d_tink);
+            t3d_tink.mul(t3dstep);
+            tg_tink.setTransform(t3d_tink);
+        }
+        
+        if (key == 'w') {
+            t3dstep.set(new Vector3d(0.0, 0.0, -0.1));
             tg_tink.getTransform(t3d_tink);
             t3d_tink.mul(t3dstep);
             tg_tink.setTransform(t3d_tink);
@@ -256,7 +263,7 @@ public class ComputerGraphics3DShapesComposition extends JFrame implements KeyLi
     public void keyReleased(KeyEvent e) {
     }
 
-    public void keyPressed(KeyEvent e) {
+    public void keyTyped(KeyEvent e) {
     }
 
     class CollisionDetectorGroup extends Behavior {
