@@ -102,8 +102,8 @@ public class ComputerGraphics3DShapesComposition extends JFrame  {
         objRoot.addChild(createCylinder());
 
         Background sceneBackground = new Background(0.5f, 1.0f, 1.0f);
-        URL filenameBackground = getClass().getClassLoader().getResource("space.jpg");
-        sceneBackground.setImage(new TextureLoader(filenameBackground, this).getImage());
+        URL imageBackground = getClass().getClassLoader().getResource("space.jpg");
+        sceneBackground.setImage(new TextureLoader(imageBackground, this).getImage());
         sceneBackground.setImageScaleMode(Background.SCALE_FIT_ALL);
         sceneBackground.setApplicationBounds(bounds);
 
@@ -115,10 +115,10 @@ public class ComputerGraphics3DShapesComposition extends JFrame  {
     public void initiateRotation(int rotationSpeed, TransformGroup targetTransformGroup) {
         Alpha e = new Alpha(-1, rotationSpeed);
         RotationInterpolator selfSpin = new RotationInterpolator(e, targetTransformGroup);
-        BoundingSphere mondzone = new BoundingSphere();
+        BoundingSphere boundingSphere = new BoundingSphere();
         Vector behaviours = new Vector();
         behaviours.add(selfSpin);
-        selfSpin.setSchedulingBounds(mondzone);
+        selfSpin.setSchedulingBounds(boundingSphere);
         selfSpin.setTarget(targetTransformGroup);
         targetTransformGroup.addChild(selfSpin);
     }
@@ -260,8 +260,6 @@ public class ComputerGraphics3DShapesComposition extends JFrame  {
         private boolean inCollision = false;
         private TransformGroup group;
         
-        private int collisionCounts = 0;
-
         private WakeupOnCollisionEntry wEnter;
         private WakeupOnCollisionExit wExit;
 
