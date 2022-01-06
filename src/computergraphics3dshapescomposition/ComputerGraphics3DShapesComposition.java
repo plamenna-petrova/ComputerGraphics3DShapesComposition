@@ -255,19 +255,6 @@ public class ComputerGraphics3DShapesComposition extends JFrame  {
         return light;
     }
 
-    private void transformWhenKeyPressed(Transform3D step, Transform3D tink3D, TransformGroup transformGroupTink, Vector3d vector) {
-        step.set(vector);
-        transformGroupTink.getTransform(tink3D);
-        tink3D.mul(step);
-        transformGroupTink.setTransform(tink3D);
-    }
-
-    public void keyReleased(KeyEvent e) {
-    }
-
-    public void keyTyped(KeyEvent e) {
-    }
-
     class CollisionDetectorGroup extends Behavior {
 
         private boolean inCollision = false;
