@@ -24,7 +24,9 @@ import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Enumeration;
+import java.util.Vector;
 import javax.imageio.ImageIO;
+import javax.media.j3d.Alpha;
 import javax.media.j3d.Appearance;
 import javax.media.j3d.Behavior;
 import javax.media.j3d.BoundingSphere;
@@ -33,6 +35,7 @@ import javax.media.j3d.Canvas3D;
 import javax.media.j3d.DirectionalLight;
 import javax.media.j3d.Light;
 import javax.media.j3d.Material;
+import javax.media.j3d.RotationInterpolator;
 import javax.media.j3d.Texture;
 import javax.media.j3d.Transform3D;
 import javax.media.j3d.TransformGroup;
@@ -42,6 +45,7 @@ import javax.swing.JFrame;
 import javax.vecmath.AxisAngle4f;
 import javax.vecmath.Color3f;
 import javax.vecmath.Point3d;
+import javax.vecmath.Quat4f;
 import javax.vecmath.Vector3d;
 import javax.vecmath.Vector3f;
 
@@ -57,7 +61,8 @@ public class ComputerGraphics3DShapesComposition extends JFrame implements KeyLi
     private Transform3D t3d_tink = null;
     private Transform3D t3dstep = new Transform3D();
     private BoundingSphere bounds;
-
+    
+    
     public ComputerGraphics3DShapesComposition() {
         setLayout(new BorderLayout());
         GraphicsConfiguration config = SimpleUniverse.getPreferredConfiguration();
@@ -95,19 +100,34 @@ public class ComputerGraphics3DShapesComposition extends JFrame implements KeyLi
         platformGeom.addChild(keyNavBeh);
         universe.getViewingPlatform().setPlatformGeometry(platformGeom);
 
-        objRoot.addChild(createCone());
+        objRoot.addChild(createConeWithNestedSphere());
         objRoot.addChild(createCylinder());
 
         return objRoot;
     }
-
-    private BranchGroup createCone() {
+    
+    public void initiateRotation(int rotationSpeed, TransformGroup targetTransformGroup) {
+        Alpha e = new Alpha(-1, rotationSpeed);
+	RotationInterpolator selfSpin = new RotationInterpolator(e, targetTransformGroup);
+	BoundingSphere mondzone = new BoundingSphere();
+        Vector behaviours = new Vector();
+        behaviours.add(selfSpin);
+	selfSpin.setSchedulingBounds(mondzone);
+	selfSpin.setTarget(targetTransformGroup);
+	targetTransformGroup.addChild(selfSpin);
+    } 
+    
+    private BranchGroup createConeWithNestedSphere() {
         
-        BufferedImage cylinderBrickImage;
-        Texture texture;
+        BufferedImage coneBrickImage;
+        BufferedImage sphereLavaImage;
+        Texture coneTexture;
+        Texture sphereTexture;
 
         BranchGroup objRoot = new BranchGroup();
         TransformGroup tg = new TransformGroup();
+        
+        tg.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
 
         tg_tink = new TransformGroup();
         t3d_tink = new Transform3D();
@@ -123,27 +143,39 @@ public class ComputerGraphics3DShapesComposition extends JFrame implements KeyLi
         Appearance cylinderAppearance = new Appearance();
         
         try {
-            cylinderBrickImage = ImageIO.read(getClass().getResourceAsStream("/brick2.jpg"));
-            texture = new TextureLoader(cylinderBrickImage, this).getTexture();
-            cylinderAppearance.setTexture(texture);
-        } catch (IOException ex) {
-            ex.printStackTrace();
+            coneBrickImage = ImageIO.read(getClass().getResourceAsStream("/brick2.jpg"));
+            coneTexture = new TextureLoader(coneBrickImage, this).getTexture();
+            cylinderAppearance.setTexture(coneTexture);
+        } catch (IOException exception) {
+            exception.printStackTrace();
         }
        
         Cone cone = new Cone(2.8f, 5.5f, Primitive.GENERATE_NORMALS_INWARD | Primitive.GENERATE_TEXTURE_COORDS, cylinderAppearance);
         
         Appearance shpereAppearance = new Appearance();
         
+        try {
+            sphereLavaImage = ImageIO.read(getClass().getResourceAsStream("/lava.jpg"));
+            sphereTexture = new TextureLoader(sphereLavaImage, this).getTexture();
+            shpereAppearance.setTexture(sphereTexture);
+        } catch (IOException exception) {
+            exception.printStackTrace();
+        }
+        
         Sphere sphere = new Sphere(0.6f, Primitive.GENERATE_NORMALS|Primitive.GENERATE_TEXTURE_COORDS, 50, shpereAppearance);
 
         tg_tink.addChild(cone);
+        
         tg_tink.addChild(sphere);
-
+        
         CollisionDetectorGroup cdGroup = new CollisionDetectorGroup(tg_tink);
         cdGroup.setSchedulingBounds(bounds);
 
         tg.addChild(tg_tink);
+        
         tg.addChild(cdGroup);
+        
+        initiateRotation(18000, tg);
 
         objRoot.addChild(tg);
         objRoot.addChild(createLight());
