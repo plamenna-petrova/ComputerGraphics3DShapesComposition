@@ -61,8 +61,7 @@ public class ComputerGraphics3DShapesComposition extends JFrame implements KeyLi
     private Transform3D t3d_tink = null;
     private Transform3D t3dstep = new Transform3D();
     private BoundingSphere bounds;
-    
-    
+
     public ComputerGraphics3DShapesComposition() {
         setLayout(new BorderLayout());
         GraphicsConfiguration config = SimpleUniverse.getPreferredConfiguration();
@@ -105,20 +104,20 @@ public class ComputerGraphics3DShapesComposition extends JFrame implements KeyLi
 
         return objRoot;
     }
-    
+
     public void initiateRotation(int rotationSpeed, TransformGroup targetTransformGroup) {
         Alpha e = new Alpha(-1, rotationSpeed);
-	RotationInterpolator selfSpin = new RotationInterpolator(e, targetTransformGroup);
-	BoundingSphere mondzone = new BoundingSphere();
+        RotationInterpolator selfSpin = new RotationInterpolator(e, targetTransformGroup);
+        BoundingSphere mondzone = new BoundingSphere();
         Vector behaviours = new Vector();
         behaviours.add(selfSpin);
-	selfSpin.setSchedulingBounds(mondzone);
-	selfSpin.setTarget(targetTransformGroup);
-	targetTransformGroup.addChild(selfSpin);
-    } 
-    
+        selfSpin.setSchedulingBounds(mondzone);
+        selfSpin.setTarget(targetTransformGroup);
+        targetTransformGroup.addChild(selfSpin);
+    }
+
     private BranchGroup createConeWithNestedSphere() {
-        
+
         BufferedImage coneBrickImage;
         BufferedImage sphereLavaImage;
         Texture coneTexture;
@@ -126,7 +125,7 @@ public class ComputerGraphics3DShapesComposition extends JFrame implements KeyLi
 
         BranchGroup objRoot = new BranchGroup();
         TransformGroup tg = new TransformGroup();
-        
+
         tg.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
 
         tg_tink = new TransformGroup();
@@ -141,7 +140,7 @@ public class ComputerGraphics3DShapesComposition extends JFrame implements KeyLi
         tg_tink.setTransform(t3d_tink);
 
         Appearance cylinderAppearance = new Appearance();
-        
+
         try {
             coneBrickImage = ImageIO.read(getClass().getResourceAsStream("/brick.jpg"));
             coneTexture = new TextureLoader(coneBrickImage, this).getTexture();
@@ -149,15 +148,15 @@ public class ComputerGraphics3DShapesComposition extends JFrame implements KeyLi
         } catch (IOException exception) {
             exception.printStackTrace();
         }
-       
+
         Cone cone = new Cone(2.8f, 5.5f, Primitive.GENERATE_NORMALS_INWARD | Primitive.GENERATE_TEXTURE_COORDS, cylinderAppearance);
-        
+
         TransformGroup sphereTransformGroup = new TransformGroup();
-        
+
         sphereTransformGroup.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
-        
+
         Appearance shpereAppearance = new Appearance();
-        
+
         try {
             sphereLavaImage = ImageIO.read(getClass().getResourceAsStream("/lava.jpg"));
             sphereTexture = new TextureLoader(sphereLavaImage, this).getTexture();
@@ -165,24 +164,24 @@ public class ComputerGraphics3DShapesComposition extends JFrame implements KeyLi
         } catch (IOException exception) {
             exception.printStackTrace();
         }
-        
-        Sphere sphere = new Sphere(0.6f, Primitive.GENERATE_NORMALS|Primitive.GENERATE_TEXTURE_COORDS, 50, shpereAppearance);
-        
+
+        Sphere sphere = new Sphere(0.6f, Primitive.GENERATE_NORMALS | Primitive.GENERATE_TEXTURE_COORDS, 50, shpereAppearance);
+
         sphereTransformGroup.addChild(sphere);
-        
+
         initiateRotation(5000, sphereTransformGroup);
 
         tg_tink.addChild(cone);
-        
+
         tg_tink.addChild(sphereTransformGroup);
-        
+
         CollisionDetectorGroup cdGroup = new CollisionDetectorGroup(tg_tink);
         cdGroup.setSchedulingBounds(bounds);
 
         tg.addChild(tg_tink);
-        
+
         tg.addChild(cdGroup);
-        
+
         initiateRotation(15000, tg);
 
         objRoot.addChild(tg);
@@ -195,7 +194,7 @@ public class ComputerGraphics3DShapesComposition extends JFrame implements KeyLi
     }
 
     private BranchGroup createCylinder() {
-        
+
         BranchGroup objRoot = new BranchGroup();
         TransformGroup tg = new TransformGroup();
         Transform3D t3d = new Transform3D();
@@ -218,11 +217,11 @@ public class ComputerGraphics3DShapesComposition extends JFrame implements KeyLi
         material.setSpecularColor(new Color3f(Color.RED));
 
         cylinderAppearance.setMaterial(material);
-        
+
         Cylinder cylinder = new Cylinder(5, 10, cylinderAppearance);
-        
+
         tg.addChild(cylinder);
-        
+
         objRoot.addChild(tg);
         objRoot.addChild(createLight());
 
@@ -231,7 +230,7 @@ public class ComputerGraphics3DShapesComposition extends JFrame implements KeyLi
         return objRoot;
 
     }
-    
+
     private Light createLight() {
         DirectionalLight light = new DirectionalLight(true, new Color3f(1.0f, 1.0f, 1.0f),
                 new Vector3f(-0.3f, 0.2f, -1.0f));
@@ -250,7 +249,7 @@ public class ComputerGraphics3DShapesComposition extends JFrame implements KeyLi
             t3d_tink.mul(t3dstep);
             tg_tink.setTransform(t3d_tink);
         }
-        
+
         if (key == 'w') {
             t3dstep.set(new Vector3d(0.0, 0.0, -0.1));
             tg_tink.getTransform(t3d_tink);
@@ -271,6 +270,8 @@ public class ComputerGraphics3DShapesComposition extends JFrame implements KeyLi
         private boolean inCollision = false;
         private TransformGroup group;
 
+        private int collisionCounts = 0;
+
         private WakeupOnCollisionEntry wEnter;
         private WakeupOnCollisionExit wExit;
 
@@ -290,12 +291,19 @@ public class ComputerGraphics3DShapesComposition extends JFrame implements KeyLi
 
             inCollision = !inCollision;
             if (inCollision) {
-
-                t3dstep.set(new Vector3d(0.0, 0.0, -6.0));
-                tg_tink.getTransform(t3d_tink);
-                t3d_tink.mul(t3dstep);
-                tg_tink.setTransform(t3d_tink);
-
+                if (collisionCounts > 0) {
+                    t3dstep.set(new Vector3d(0.0, 0.0, -0.2));
+                    tg_tink.getTransform(t3d_tink);
+                    t3d_tink.mul(t3dstep);
+                    tg_tink.setTransform(t3d_tink);
+                    collisionCounts++;
+                } else {
+                    t3dstep.set(new Vector3d(0.0, 0.0, -6.0));
+                    tg_tink.getTransform(t3d_tink);
+                    t3d_tink.mul(t3dstep);
+                    tg_tink.setTransform(t3d_tink);
+                    collisionCounts++;
+                }
                 wakeupOn(wExit);
             } else {
                 wakeupOn(wEnter);
