@@ -101,6 +101,7 @@ public class ComputerGraphics3DShapesComposition extends JFrame  {
         objRoot.addChild(createConeWithNestedSphere());
         objRoot.addChild(createCylinder());
 
+        // setting space background to the scene graph
         Background sceneBackground = new Background(0.5f, 1.0f, 1.0f);
         URL imageBackground = getClass().getClassLoader().getResource("space.jpg");
         sceneBackground.setImage(new TextureLoader(imageBackground, this).getImage());
@@ -112,11 +113,13 @@ public class ComputerGraphics3DShapesComposition extends JFrame  {
         return objRoot;
     }
 
+    // initiate rotation method
     public void initiateRotation(int rotationSpeed, TransformGroup targetTransformGroup) {
         Alpha e = new Alpha(-1, rotationSpeed);
         RotationInterpolator selfSpin = new RotationInterpolator(e, targetTransformGroup);
         BoundingSphere boundingSphere = new BoundingSphere();
         Vector behaviours = new Vector();
+        // self spinning logic
         behaviours.add(selfSpin);
         selfSpin.setSchedulingBounds(boundingSphere);
         selfSpin.setTarget(targetTransformGroup);
@@ -138,6 +141,7 @@ public class ComputerGraphics3DShapesComposition extends JFrame  {
         tg_tink = new TransformGroup();
         t3d_tink = new Transform3D();
 
+        // allowing transform capability
         tg_tink.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
 
         t3d_tink.setTranslation(new Vector3d(-1.2, -1.4, -2.1));
@@ -148,6 +152,7 @@ public class ComputerGraphics3DShapesComposition extends JFrame  {
 
         Appearance cylinderAppearance = new Appearance();
 
+        // setting brick texture to cone appearance
         try {
             coneBrickImage = ImageIO.read(getClass().getResourceAsStream("/brick.jpg"));
             coneTexture = new TextureLoader(coneBrickImage, this).getTexture();
@@ -164,6 +169,7 @@ public class ComputerGraphics3DShapesComposition extends JFrame  {
 
         Appearance shpereAppearance = new Appearance();
 
+        // setting lava texture to sphere appearance
         try {
             sphereLavaImage = ImageIO.read(getClass().getResourceAsStream("/lava.jpg"));
             sphereTexture = new TextureLoader(sphereLavaImage, this).getTexture();
@@ -174,10 +180,13 @@ public class ComputerGraphics3DShapesComposition extends JFrame  {
 
         Sphere sphere = new Sphere(0.6f, Primitive.GENERATE_NORMALS | Primitive.GENERATE_TEXTURE_COORDS, 50, shpereAppearance);
 
+        // adding the sphere to a separate transform group
         sphereTransformGroup.addChild(sphere);
 
+        // rotating the sphere transform group
         initiateRotation(5000, sphereTransformGroup);
 
+        // adding the cone with the nested sphere to tg_tink
         tg_tink.addChild(cone);
 
         tg_tink.addChild(sphereTransformGroup);
@@ -185,10 +194,12 @@ public class ComputerGraphics3DShapesComposition extends JFrame  {
         CollisionDetectorGroup cdGroup = new CollisionDetectorGroup(tg_tink);
         cdGroup.setSchedulingBounds(bounds);
 
+        // adding tg_tink and cdGroup to the main transform group
         tg.addChild(tg_tink);
 
         tg.addChild(cdGroup);
         
+        // rotating the tg_tink
         initiateRotation(15000, tg);
 
         objRoot.addChild(tg);
@@ -219,6 +230,7 @@ public class ComputerGraphics3DShapesComposition extends JFrame  {
 
         Appearance cylinderAppearance = new Appearance();
 
+        // applying material to 
         Material material = new Material();
 
         Color3f lightColor = new Color3f(0.0f, 0.0f, 1.0f);
@@ -232,10 +244,12 @@ public class ComputerGraphics3DShapesComposition extends JFrame  {
 
         Cylinder cylinder = new Cylinder(5, 10, cylinderAppearance);
 
+        // adding the cylinder to its own transform group
         cylinderTransformGroup.addChild(cylinder);
 
         tg.addChild(cylinderTransformGroup);
 
+        // adding the main transform group as a child to the branch group instance
         objRoot.addChild(tg);
         
         objRoot.addChild(createLight());
@@ -247,6 +261,7 @@ public class ComputerGraphics3DShapesComposition extends JFrame  {
     }
 
     private Light createLight() {
+        // creating directional light with vector
         DirectionalLight light = new DirectionalLight(true, new Color3f(1.0f, 1.0f, 1.0f),
                 new Vector3f(-0.3f, 0.2f, -1.0f));
 
@@ -269,12 +284,14 @@ public class ComputerGraphics3DShapesComposition extends JFrame  {
 
         }
 
+        // intializing collision entries
         public void initialize() {
             wEnter = new WakeupOnCollisionEntry(group);
             wExit = new WakeupOnCollisionExit(group);
             wakeupOn(wEnter);
         }
 
+        // method for setting the collision distance
         private void setCollisionDistance(Transform3D step, Transform3D tink3D, TransformGroup transformGroupTink, Vector3d vector) {
             step.set(vector);
             transformGroupTink.getTransform(tink3D);
